@@ -7,10 +7,10 @@ from django.apps import apps
 
 
 def _get_content_type_and_obj(obj, model=None):
-    if isinstance(model, basestring):
+    if isinstance(model, str):
         model = apps.get_model(*model.split("."))
 
-    if isinstance(obj, (int, long)):
+    if isinstance(obj, (int)):
         obj = model.objects.get(pk=obj)
 
     return ContentType.objects.get_for_model(type(obj)), obj
@@ -35,10 +35,10 @@ class FavoriteManager(models.Manager):
             Favorite.objects.for_user(user, model="music.song")
         """
 
-        qs = self.get_query_set().filter(user=user)
+        qs = self.get_queryset().filter(user=user)
 
         if model:
-            if isinstance(model, basestring):
+            if isinstance(model, str):
                 model = apps.get_model(*model.split("."))
 
             content_type = ContentType.objects.get_for_model(model)
@@ -59,12 +59,12 @@ class FavoriteManager(models.Manager):
         """
 
         # if model is an app_label.model string make it a Model class
-        if isinstance(model, basestring):
+        if isinstance(model, str):
             model = get_model(*model.split("."))
 
         content_type = ContentType.objects.get_for_model(model)
 
-        qs = self.get_query_set().filter(
+        qs = self.get_queryset().filter(
             target_content_type=content_type
         )
 
@@ -86,7 +86,7 @@ class FavoriteManager(models.Manager):
 
         content_type, obj = _get_content_type_and_obj(obj, model)
 
-        qs = self.get_query_set().filter(
+        qs = self.get_queryset().filter(
             target_content_type=content_type,
             target_object_id=obj.pk
         )
@@ -111,7 +111,7 @@ class FavoriteManager(models.Manager):
         content_type, obj = _get_content_type_and_obj(obj, model)
 
         try:
-            return self.get_query_set().get(
+            return self.get_queryset().get(
                 user=user,
                 target_content_type=content_type,
                 target_object_id=obj.id
